@@ -33,7 +33,7 @@ export const getEventArgs = (event: SubstrateEvent, skip: number = -1): string[]
 
 export const getArgs = (args: Codec[], skip: number = -1): string[] => {
   // logger.info(`getArgs ${args.toString()}`)
-  const cb = (arg: Codec, index: number) => skip != index ? arg.toHuman().toString() : arg.toString();
+  const cb = (arg: Codec, index: number) => skip != index ? arg.toHuman()?.toString() : arg.toString();
   return args.map(cb);
 }
 

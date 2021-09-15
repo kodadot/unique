@@ -90,16 +90,16 @@ network:
 definitions:
   mapping: &mymapping
     handlers:
-      - handler: handleCollectionMetadata
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: ClassMetadataSet
       - handler: handleCreateCollection
         kind: substrate/EventHandler
         filter:
             module: uniques
             method: Created
+      - handler: handleCollectionMetadata
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: ClassMetadataSet
       - handler: handleCollectionDestroy
         kind: substrate/EventHandler
         filter:
