@@ -1,7 +1,7 @@
 type CollectionEntity @entity {
   id: ID!
   issuer: String!
-  admin: String!
+  admin: String
   freezer: String!
   currentOwner: String!
   metadata: String

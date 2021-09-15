@@ -36,6 +36,11 @@ export const getArgs = (args: Codec[]): string[] => {
   return args.map(arg => arg.toHuman().toString());
 }
 
+export const getSigner = (event: SubstrateEvent): string => {
+  const {extrinsic: { extrinsic }} = event;
+  return extrinsic.signer.toString();
+}
+
 export const getBasicData = (extrinsic: SubstrateExtrinsic): BasicExtrinsicData => {
   if (!extrinsic.success) {
     return {} as BasicExtrinsicData;

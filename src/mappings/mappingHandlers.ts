@@ -1,6 +1,7 @@
 import { SubstrateExtrinsic,SubstrateEvent,SubstrateBlock } from "@subql/types";
 import { CollectionEntity, NFTEntity } from "../types";
-import { processCollection, log, processTransfer, processBurn, processMetada, getEventArgs } from './utils/extract';
+import { processCollection, log, processTransfer, processBurn, processMetada, getEventArgs, getSigner } from './utils/extract';
+import { getCollectionOrElseCreate } from './utils/getter';
 import { createTokenId, exists } from './utils/helpers';
 
 export async function handleCreateCollection(event: SubstrateEvent): Promise<void> {
@@ -12,16 +13,10 @@ export async function handleCreateCollection(event: SubstrateEvent): Promise<voi
         return;
     }
 
-    const final = CollectionEntity.create(collection);
-    final.id = id;
-    final.issuer = caller;
-    final.currentOwner = caller;
+    const final = await getCollectionOrElseCreate(id.toString(), caller);    
     final.admin = admin;
-    final.freezer = caller;
-    final.attributes = [];
-    final.burned = false;
-    final.frozen = false;
-    
+    final.blockNumber = BigInt(collection.blockNumber);
+
 
     logger.info(`SAVED [COLLECTION] ${final.id}`)
     await final.save();
@@ -29,6 +24,7 @@ export async function handleCreateCollection(event: SubstrateEvent): Promise<voi
 
 export async function handleCollectionMetadata(event: SubstrateEvent): Promise<void> {
     const {event: {data: [id, metadata, frozen]}} = event;
+    const caller = getSigner(event);
 
     log('METADATA', { id, metadata, frozen })
     if (!id) {
@@ -36,12 +32,7 @@ export async function handleCollectionMetadata(event: SubstrateEvent): Promise<v
         return;
     }
 
-    const final = await CollectionEntity.get(id.toString());
-    
-    if (!exists(final)) {
-        logger.error(`Collection ${id} does not exist`);
-        return;
-    }
+    const final = await getCollectionOrElseCreate(id.toString(), caller);
 
     final.metadata = metadata.toHuman().toString();
     final.metadataFrozen = frozen.toHuman() as boolean;
@@ -53,7 +44,8 @@ export async function handleCollectionMetadata(event: SubstrateEvent): Promise<v
 
 export async function handleCollectionDestroy(event: SubstrateEvent): Promise<void> {
     const [id] = getEventArgs(event);
-    const final = await CollectionEntity.get(id);
+    const caller = getSigner(event);
+    const final = await getCollectionOrElseCreate(id.toString(), caller);
     final.burned = true;
     logger.info(`SAVED [COLLECTION] ${final.id}`)
     await final.save();
