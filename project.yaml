@@ -130,6 +130,12 @@ definitions:
         filter:
           module: uniques
           method: AttributeSet
+      - handler: handleAttributeClear
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: AttributeCleared
+          
 dataSources:
   - name: main
     kind: substrate/Runtime

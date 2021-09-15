@@ -68,7 +68,7 @@ export async function handleCollectionFreeze(event: SubstrateEvent): Promise<voi
 export async function handleCollectionTransfer(event: SubstrateEvent): Promise<void> {
     const [id, newOwner] = getEventArgs(event, 0);
     const caller = getSigner(event);
-    const final = await getCollectionOrElseCreate(id.toString(), caller);
+    const final = await getCollectionOrElseCreate(id, caller);
     final.currentOwner = newOwner;
     logger.info(`SAVED [COLLECTION] ${final.id}`)
     await final.save();
@@ -94,12 +94,28 @@ export async function handleAttributeSet(event: SubstrateEvent): Promise<void> {
         log('TOKEN_ATTRIBUTE_SET', { id, tokenId, key, value })  
     } else {
         const final = await getCollectionOrElseCreate(id.toString(), caller);
-        final.attributes.push({ key, value });
+        const alreadyDefined = final.attributes.findIndex(a => a.key === key)
+        if (alreadyDefined >= 0) {
+            final.attributes[alreadyDefined].value = value;
+        } else {
+            final.attributes.push({ key, value });
+        }
         await final.save();
     }
+}
 
-    // const final = await NFTEntity.get(id.toString());
-    // final.attributes.push({ key, value });
-    // logger.info(`SAVED [COLLECTION] ${final.id}`)
-    // await final.save();
+export async function handleAttributeClear(event: SubstrateEvent): Promise<void> {
+    const [id, tokenId, key] = getEventArgs(event, 0);
+    const caller = getSigner(event);
+    log('ATTRIBUTE_CLEAR', { id, tokenId, key })
+    if (tokenId) {
+        log('TOKEN_ATTRIBUTE_CLEAR', { id, tokenId, key })  
+    } else {
+        const final = await getCollectionOrElseCreate(id.toString(), caller);
+        const alreadyDefined = final.attributes.findIndex(a => a.key === key)
+        if (alreadyDefined >= 0) {
+            final.attributes.splice(alreadyDefined, 1)   
+        }
+        await final.save();
+    }
 }
