@@ -1,17 +1,41 @@
-type StarterEntity @entity {
+type CollectionEntity @entity {
+  id: ID!
+  issuer: String!
+  admin: String!
+  freezer: String!
+  currentOwner: String!
+  metadata: String
+  nfts: [NFTEntity] @derivedFrom(field: "collection")
+  blockNumber: BigInt
+  burned: Boolean!
+  frozen: Boolean!
+  attributes: [Attribute]!
+  metadataFrozen: Boolean
 
-  id: ID! #id is a required field
+}
 
-  field1: Int!
+type NFTEntity @entity {
+  id: ID!
+  issuer: String!
+  currentOwner: String!
+  metadata: String
+  burned: Boolean!
+  collection: CollectionEntity!
+  blockNumber: BigInt
+  events: [Event]
+  attributes: [Attribute]!
+  metadataFrozen: Boolean
+}
 
-  field2: String #filed2 is an optional field
+type Attribute @jsonField {
+  key: String!
+  value: String!
+}
 
-  field3: BigInt
-
-  field4: Date
-
-  field5: Boolean
-
-
-
+type Event @jsonField {
+  blockNumber: String
+  timestamp: Date
+  caller: String!
+  interaction: String
+  meta: String!
 }

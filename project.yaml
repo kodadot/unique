@@ -90,15 +90,46 @@ network:
 definitions:
   mapping: &mymapping
     handlers:
-      - handler: handleBlock
-        kind: substrate/BlockHandler
-      - handler: handleEvent
+      - handler: handleCollectionMetadata
         kind: substrate/EventHandler
         filter:
-          module: balances
-          method: Deposit
-      - handler: handleCall
-        kind: substrate/CallHandler
+          module: uniques
+          method: ClassMetadataSet
+      - handler: handleCreateCollection
+        kind: substrate/EventHandler
+        filter:
+            module: uniques
+            method: Created
+      - handler: handleCollectionDestroy
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: Destroyed
+      - handler: handleCollectionFreeze
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: ClassThawed
+      - handler: handleCollectionFreeze
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: ClassFrozen
+      - handler: handleCollectionTransfer
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: OwnerChanged
+      - handler: handleCollectionPermission
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: TeamChanged
+      - handler: handleAttributeSet
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: AttributeSet
 dataSources:
   - name: main
     kind: substrate/Runtime

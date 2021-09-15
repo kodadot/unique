@@ -1,0 +1,130 @@
+import { Call as TCall } from "@polkadot/types/interfaces";
+import { EventRecord, Event } from '@polkadot/types/interfaces';
+import { SubstrateExtrinsic, SubstrateEvent } from "@subql/types";
+import { Codec } from '@polkadot/types/types';
+import { BasicExtrinsicData, Collection, CollectionMetadata, Interaction, Token } from './types';
+import { createTokenId, isCreateCollection, isCreateToken, isTokenClassCreated, isTokenMinted, tokenIdOf } from './helpers';
+
+export const log = (title: string, arg: any) => logger.info(`[${title}] ${JSON.stringify(arg, null, 2)}` )
+
+export const getEvents = (records: EventRecord[], cb: (record: EventRecord) => boolean): string[] => {
+  const eventRecord = records.find(cb);
+  if (eventRecord) {
+    return getArgs(eventRecord.event.data);
+  }
+
+  return []
+}
+
+const getCollectionEvents = (records: EventRecord[]): string | undefined => {
+  return getEvents(records, isTokenClassCreated)[1];
+}
+
+const getTokenEvents = (records: EventRecord[]): string[] => {
+  return getEvents(records, isTokenMinted);
+}
+
+
+export const getEventArgs = (event: SubstrateEvent): string[] => {
+  const {event: { data }} = event;
+  return getArgs(data);
+}
+
+
+export const getArgs = (args: Codec[]): string[] => {
+  // logger.info(`getArgs ${args.toString()}`)
+  return args.map(arg => arg.toHuman().toString());
+}
+
+export const getBasicData = (extrinsic: SubstrateExtrinsic): BasicExtrinsicData => {
+  if (!extrinsic.success) {
+    return {} as BasicExtrinsicData;
+  }
+
+  const signer = extrinsic.extrinsic.signer.toString();
+  const blockNumber = extrinsic.block.block.header.number.toString()
+  const timestamp = extrinsic.block.timestamp;
+
+  return {
+    caller: signer,
+    blockNumber,
+    timestamp,
+  }
+}
+
+export const processCollection = (extrinsic: SubstrateExtrinsic): Collection => {
+  // if (!isCreateCollection(extrinsic.extrinsic.method as TCall)) {
+  //   logger.error(`[COLLECTION] ${extrinsic.extrinsic.method.toString()} is not a create collection`);
+  //   return;
+  // }
+
+  const data = getBasicData(extrinsic);
+  const [id, admin] = getArgs(extrinsic.extrinsic.args);
+
+  return {
+    ...data,
+    id,
+    admin,
+  }
+
+}
+
+export const processMetada = (extrinsic: SubstrateExtrinsic): CollectionMetadata => {
+  // DEV: TODO: handle correctly metadata for NFT
+  // if (!isCreateCollection(extrinsic.extrinsic.method as TCall)) {
+  //   logger.error(`[COLLECTION] ${extrinsic.extrinsic.method.toString()} is not a create collection`);
+  //   return;
+  // }
+
+  const data = getBasicData(extrinsic);
+  const [id, metadata, frozen] = getArgs(extrinsic.extrinsic.args);
+
+  return {
+    ...data,
+    id,
+    metadata,
+    frozen: !!frozen, // DEV: Could be string ('true')
+  }
+}
+
+
+
+// export const processToken = (extrinsic: SubstrateExtrinsic): Token => {
+//   if (!isCreateToken(extrinsic.extrinsic.method as TCall)) {
+//     logger.error(`[TOKEN] ${extrinsic.extrinsic.method.toString()} is not a create NFT`);
+//     return;
+//   }
+
+//   const data = getBasicData(extrinsic);
+//   const args = getArgs(extrinsic.extrinsic.args);
+//   const events = getTokenEvents(extrinsic.events);
+
+//   return {
+//     ...data,
+//     id: events[2],
+//     metadata: args[1],
+//     collectionId: args[0],
+//   }
+// }
+
+export const processTransfer = (extrinsic: SubstrateExtrinsic): Interaction => {
+  const data = getBasicData(extrinsic);
+  const args = getArgs(extrinsic.extrinsic.args);
+
+  return {
+    ...data,
+    id: tokenIdOf(args[1]),
+    value: args[0],
+  }
+}
+
+export const processBurn = (extrinsic: SubstrateExtrinsic): Interaction => {
+  const data = getBasicData(extrinsic);
+  const args = getArgs(extrinsic.extrinsic.args);
+
+  return {
+    ...data,
+    id: tokenIdOf(args[0]),
+    value: ''
+  }
+}
