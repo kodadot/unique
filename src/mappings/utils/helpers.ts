@@ -15,6 +15,15 @@ export function exists<T>(entity: T | undefined): boolean {
   return !!entity
 }
 
+export function isEmpty<T>(entity: T | undefined, event: string): boolean {
+  if (!exists(entity)) {
+    logger.warn(`${event}: No ID found on entity is undefined`)
+    return true
+  } 
+
+  return false
+}
+
 export const createTokenId = (collection: string, id: string) => `${collection}-${id}`
 
 export const tokenIdOf = (collectionAndId: [string, string] | string): string => {

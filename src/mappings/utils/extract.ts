@@ -25,15 +25,16 @@ const getTokenEvents = (records: EventRecord[]): string[] => {
 }
 
 
-export const getEventArgs = (event: SubstrateEvent): string[] => {
+export const getEventArgs = (event: SubstrateEvent, skip: number = -1): string[] => {
   const {event: { data }} = event;
-  return getArgs(data);
+  return getArgs(data, skip);
 }
 
 
-export const getArgs = (args: Codec[]): string[] => {
+export const getArgs = (args: Codec[], skip: number = -1): string[] => {
   // logger.info(`getArgs ${args.toString()}`)
-  return args.map(arg => arg.toHuman().toString());
+  const cb = (arg: Codec, index: number) => skip != index ? arg.toHuman().toString() : arg.toString();
+  return args.map(cb);
 }
 
 export const getSigner = (event: SubstrateEvent): string => {
