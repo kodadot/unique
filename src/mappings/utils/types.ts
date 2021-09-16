@@ -17,9 +17,8 @@ export interface CollectionMetadata extends ExtrinsicData {
   frozen: boolean;
 }
 
-export interface Token extends Collection {
-  metadata: string;
-  id: string;
+export interface Token extends ExtrinsicData {
+  owner: string;
   collectionId: string;
 }
 

@@ -25,15 +25,15 @@ const getTokenEvents = (records: EventRecord[]): string[] => {
 }
 
 
-export const getEventArgs = (event: SubstrateEvent, skip: number = -1): string[] => {
+export const getEventArgs = (event: SubstrateEvent, skip: number[] = []): string[] => {
   const {event: { data }} = event;
   return getArgs(data, skip);
 }
 
 
-export const getArgs = (args: Codec[], skip: number = -1): string[] => {
+export const getArgs = (args: Codec[], skip: number[] = []): string[] => {
   // logger.info(`getArgs ${args.toString()}`)
-  const cb = (arg: Codec, index: number) => skip != index ? arg.toHuman()?.toString() : arg.toString();
+  const cb = (arg: Codec, index: number) => !skip.includes(index) ? arg.toHuman()?.toString() : arg.toString();
   return args.map(cb);
 }
 
@@ -95,23 +95,22 @@ export const processMetada = (extrinsic: SubstrateExtrinsic): CollectionMetadata
 
 
 
-// export const processToken = (extrinsic: SubstrateExtrinsic): Token => {
-//   if (!isCreateToken(extrinsic.extrinsic.method as TCall)) {
-//     logger.error(`[TOKEN] ${extrinsic.extrinsic.method.toString()} is not a create NFT`);
-//     return;
-//   }
+export const processToken = (extrinsic: SubstrateExtrinsic): Token => {
+  // if (!isCreateToken(extrinsic.extrinsic.method as TCall)) {
+  //   logger.error(`[TOKEN] ${extrinsic.extrinsic.method.toString()} is not a create NFT`);
+  //   return;
+  // }
 
-//   const data = getBasicData(extrinsic);
-//   const args = getArgs(extrinsic.extrinsic.args);
-//   const events = getTokenEvents(extrinsic.events);
+  const data = getBasicData(extrinsic);
+  const [collectionId, id, owner] = getArgs(extrinsic.extrinsic.args);
 
-//   return {
-//     ...data,
-//     id: events[2],
-//     metadata: args[1],
-//     collectionId: args[0],
-//   }
-// }
+  return {
+    ...data,
+    id,
+    owner,
+    collectionId
+  }
+}
 
 export const processTransfer = (extrinsic: SubstrateExtrinsic): Interaction => {
   const data = getBasicData(extrinsic);

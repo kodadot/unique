@@ -135,7 +135,41 @@ definitions:
         filter:
           module: uniques
           method: AttributeCleared
-          
+      - handler: handleTokenCreate
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: Issued
+      - handler: handleTokenTransfer
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: Transferred
+      - handler: handleTokenBurn
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: Burned
+      - handler: handleTokenFreeze
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: Frozen
+      - handler: handleTokenFreeze
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: Thawed
+      - handler: handleTokenMetadata
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: MetadataSet
+      - handler: handleTokenMetadataClear
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: MetadataCleared
 dataSources:
   - name: main
     kind: substrate/Runtime
