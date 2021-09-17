@@ -42,16 +42,13 @@ export async function handleCollectionMetadata(event: SubstrateEvent): Promise<v
 
 export async function handleCollectionDestroy(event: SubstrateEvent): Promise<void> {
     const [id] = getEventArgs(event, [0]);
-    const caller = getSigner(event);
 
     if (isEmpty(id, 'DESTROY')) {
         return;
     }
 
-    const final = await getCollectionOrElseCreate(id.toString(), caller);
-    final.burned = true;
-    logger.info(`SAVED [COLLECTION] ${final.id}`)
-    await final.save();
+    logger.info(`REMOVING [COLLECTION] ${id}`)
+    await CollectionEntity.remove(id)
 }
 
 export async function handleCollectionFreeze(event: SubstrateEvent): Promise<void> {
@@ -150,12 +147,9 @@ export async function handleTokenTransfer(event: SubstrateEvent): Promise<void> 
 
 export async function handleTokenBurn(event: SubstrateEvent): Promise<void> {
     const [collectionId, id] = getEventArgs(event, [0,1]);
-    const caller = getSigner(event);
-    const final = await getTokenOrElseCreate(createTokenId(collectionId, id), caller);
-
-    final.burned = true;
-    logger.info(`SAVED [TOKEN] ${final.id}`)
-    await final.save();
+    const tokenId = createTokenId(collectionId, id);
+    logger.info(`REMOVING [TOKEN] ${tokenId}`)
+    await NFTEntity.remove(tokenId);
 }
 
 export async function handleTokenFreeze(event: SubstrateEvent): Promise<void> {
