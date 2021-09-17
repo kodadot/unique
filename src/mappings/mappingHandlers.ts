@@ -197,3 +197,13 @@ export async function handleTokenMetadataClear(event: SubstrateEvent): Promise<v
     await final.save();
 }
 
+export async function handleTokenApproval(event: SubstrateEvent): Promise<void> {
+    const [collectionId, id, , delegate] = getEventArgs(event, [0, 1]);
+    const caller = getSigner(event);
+    const final = await getTokenOrElseCreate(createTokenId(collectionId, id), caller);
+    const isCancel = matchEvent(event.event, 'ApprovalCancelled', 'uniques');
+    log('GRANTING TOKEN APPROVAL', { id, delegate, isCancel })
+    final.delegate = isCancel ? null : delegate;
+    logger.info(`SAVED [TOKEN] ${final.id}`)
+    await final.save();
+}

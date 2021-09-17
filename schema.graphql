@@ -17,6 +17,7 @@ type NFTEntity @entity {
   id: ID!
   issuer: String!
   currentOwner: String!
+  delegate: String
   metadata: String
   burned: Boolean!
   frozen: Boolean!

@@ -170,6 +170,16 @@ definitions:
         filter:
           module: uniques
           method: MetadataCleared
+      - handler: handleTokenApproval
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: ApprovedTransfer
+      - handler: handleTokenApproval
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: ApprovalCancelled
 dataSources:
   - name: main
     kind: substrate/Runtime
