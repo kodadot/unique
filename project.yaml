@@ -125,11 +125,6 @@ definitions:
         filter:
           module: uniques
           method: TeamChanged
-      - handler: handleAttributeSet
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: AttributeSet
       - handler: handleAttributeClear
         kind: substrate/EventHandler
         filter:
@@ -145,11 +140,6 @@ definitions:
         filter:
           module: uniques
           method: Transferred
-      - handler: handleTokenBurn
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: Burned
       - handler: handleTokenFreeze
         kind: substrate/EventHandler
         filter:
@@ -180,6 +170,16 @@ definitions:
         filter:
           module: uniques
           method: ApprovalCancelled
+      - handler: handleAttributeSet
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: AttributeSet
+      - handler: handleTokenBurn
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: Burned
 dataSources:
   - name: main
     kind: substrate/Runtime
