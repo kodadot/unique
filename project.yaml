@@ -100,11 +100,6 @@ definitions:
         filter:
           module: uniques
           method: ClassMetadataSet
-      - handler: handleCollectionDestroy
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: Destroyed
       - handler: handleCollectionFreeze
         kind: substrate/EventHandler
         filter:
@@ -180,6 +175,11 @@ definitions:
         filter:
           module: uniques
           method: Burned
+      - handler: handleCollectionDestroy
+        kind: substrate/EventHandler
+        filter:
+          module: uniques
+          method: Destroyed
 dataSources:
   - name: main
     kind: substrate/Runtime
