@@ -263,3 +263,51 @@ export async function handleTokenApproval(
   logger.info(`SAVED [TOKEN] ${final.id}`)
   await final.save()
 }
+
+// Master should handle edge cases like:
+handleEventMaster
+export async function handleEventMaster(event: SubstrateEvent): Promise<void> {
+  const [id] = getEventArgs(event, [0])
+  log('MASTER', {
+    id,
+    method: event.event.method,
+    section: event.event.section,
+  })
+
+  switch (event.event.method) {
+    case 'Created':
+      return handleCreateCollection(event)
+    case 'ClassMetadataSet':
+      return handleCollectionMetadata(event)
+    case 'ClassThawed':
+    case 'ClassFrozen':
+      return handleCollectionFreeze(event)
+    case 'OwnerChanged':
+      return handleCollectionTransfer(event)
+    case 'TeamChanged':
+      return handleCollectionPermission(event)
+    case 'AttributeCleared':
+      return handleAttributeClear(event)
+    case 'Issued':
+      return handleTokenCreate(event)
+    case 'Transferred':
+      return handleTokenTransfer(event)
+    case 'Frozen':
+    case 'Thawed':
+      return handleTokenFreeze(event)
+    case 'MetadataSet':
+      return handleTokenMetadata(event)
+    case 'MetadataCleared':
+      return handleTokenMetadataClear(event)
+    case 'ApprovedTransfer':
+      return handleTokenApproval(event)
+    case 'ApprovalCancelled':
+      return handleTokenApproval(event)
+    case 'AttributeSet':
+      return handleAttributeSet(event)
+    case 'Burned':
+      return handleTokenBurn(event)
+    case 'Destroyed':
+      return handleCollectionDestroy(event)
+  }
+}

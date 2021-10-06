@@ -90,96 +90,10 @@ network:
 definitions:
   mapping: &mymapping
     handlers:
-      - handler: handleCreateCollection
-        kind: substrate/EventHandler
-        filter:
-            module: uniques
-            method: Created
-      - handler: handleCollectionMetadata
+      - handler: handleEventMaster
         kind: substrate/EventHandler
         filter:
           module: uniques
-          method: ClassMetadataSet
-      - handler: handleCollectionFreeze
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: ClassThawed
-      - handler: handleCollectionFreeze
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: ClassFrozen
-      - handler: handleCollectionTransfer
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: OwnerChanged
-      - handler: handleCollectionPermission
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: TeamChanged
-      - handler: handleAttributeClear
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: AttributeCleared
-      - handler: handleTokenCreate
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: Issued
-      - handler: handleTokenTransfer
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: Transferred
-      - handler: handleTokenFreeze
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: Frozen
-      - handler: handleTokenFreeze
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: Thawed
-      - handler: handleTokenMetadata
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: MetadataSet
-      - handler: handleTokenMetadataClear
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: MetadataCleared
-      - handler: handleTokenApproval
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: ApprovedTransfer
-      - handler: handleTokenApproval
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: ApprovalCancelled
-      - handler: handleAttributeSet
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: AttributeSet
-      - handler: handleTokenBurn
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: Burned
-      - handler: handleCollectionDestroy
-        kind: substrate/EventHandler
-        filter:
-          module: uniques
-          method: Destroyed
 dataSources:
   - name: main
     kind: substrate/Runtime
