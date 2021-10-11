@@ -13,6 +13,7 @@ import {
   getEventArgs,
   getSigner,
   processToken,
+  getArgs,
 } from './utils/extract'
 import { getCollectionOrElseCreate, getTokenOrElseCreate } from './utils/getter'
 import { createTokenId, exists, isEmpty, matchEvent } from './utils/helpers'
@@ -36,6 +37,24 @@ export async function handleCreateCollection(
   await final.save()
 }
 
+export async function handleForceCreateCollection(event: SubstrateEvent): Promise<void> {
+  const collection = processCollection(event.extrinsic)
+  const [id, admin] = getEventArgs(event, [0])
+  const caller = getSigner(event)
+  log('CREATE', { id, caller, admin })
+  if (!id) {
+    logger.warn('No collection ID found in extrinsic')
+    return
+  }
+
+  const final = await getCollectionOrElseCreate(id.toString(), admin)
+  final.admin = admin
+  final.blockNumber = BigInt(collection.blockNumber)
+
+  logger.info(`SAVED [COLLECTION] ${final.id}`)
+  await final.save()
+}
+
 export async function handleCollectionMetadata(
   event: SubstrateEvent
 ): Promise<void> {
@@ -52,6 +71,19 @@ export async function handleCollectionMetadata(
   final.metadataFrozen = frozen === 'true'
 
   logger.info(`SAVED [COLLECTION] ${final.id}`)
+  await final.save()
+}
+
+export async function handleCollectionMetadataClear(
+  event: SubstrateEvent
+): Promise<void> {
+  const [id] = getEventArgs(event, [0])
+  const caller = getSigner(event)
+  const final = await getCollectionOrElseCreate(id.toString(), caller)
+  log('COLLECTION METADATA CLEAR', { id })
+  final.metadata = null
+  final.metadataFrozen = null
+  logger.info(`SAVED [TOKEN] ${final.id}`)
   await final.save()
 }
 
@@ -107,6 +139,22 @@ export async function handleCollectionPermission(
   final.admin = newAdmin
   final.issuer = newIssuer
   final.freezer = newFreezer
+  logger.info(`SAVED [COLLECTION] ${final.id}`)
+  await final.save()
+}
+
+export async function handleAssetStatusChange(event: SubstrateEvent): Promise<void> {
+  const {extrinsic: { extrinsic }} = event;
+  extrinsic.args
+  const [id, newOwner, newIssuer, newAdmin, newFreezer,  ,frozen] = getArgs(extrinsic.args, [0])
+  const caller = getSigner(event)
+  log('FORCE ROOT', { args: extrinsic.args })
+  const final = await getCollectionOrElseCreate(id.toString(), caller)
+  final.currentOwner = newOwner;
+  final.admin = newAdmin
+  final.issuer = newIssuer
+  final.freezer = newFreezer
+  final.frozen = frozen === 'true'
   logger.info(`SAVED [COLLECTION] ${final.id}`)
   await final.save()
 }
@@ -277,8 +325,12 @@ export async function handleEventMaster(event: SubstrateEvent): Promise<void> {
   switch (event.event.method) {
     case 'Created':
       return handleCreateCollection(event)
+    case 'ForceCreated':
+      return handleForceCreateCollection(event)
     case 'ClassMetadataSet':
       return handleCollectionMetadata(event)
+    case 'ClassMetadataCleared':
+      return handleCollectionMetadataClear(event)
     case 'ClassThawed':
     case 'ClassFrozen':
       return handleCollectionFreeze(event)
@@ -309,5 +361,27 @@ export async function handleEventMaster(event: SubstrateEvent): Promise<void> {
       return handleTokenBurn(event)
     case 'Destroyed':
       return handleCollectionDestroy(event)
+    case 'AssetStatusChanged':
+      return handleAssetStatusChange(event)
+    case 'Redeposited':
+      logger.info(`SKIPPING EVENT: ${event.event.method}`)
+      break;
+    default:
+      logger.warn(`Unknown event ${event.event.method}`)
+      break;
   }
 }
+
+// AssetStatusChanged
+// Burned
+// ClassMetadataCleared
+// ClassMetadataSet
+// Created
+// Destroyed
+// ForceCreated
+// Issued
+// MetadataSet
+// Redeposited
+
+
+// Transferred
