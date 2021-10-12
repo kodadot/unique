@@ -7,9 +7,6 @@ import { CollectionEntity, NFTEntity } from '../types'
 import {
   processCollection,
   log,
-  processTransfer,
-  processBurn,
-  processMetada,
   getEventArgs,
   getSigner,
   processToken,

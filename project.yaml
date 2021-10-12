@@ -3,90 +3,7 @@ description: GraphQL service for Uniques and Assets on Statemine
 repository: https://github.com/vikiival/unique.git
 schema: ./schema.graphql
 network:
-  endpoint: ws://docker.for.mac.localhost:9988
-  types: {
-  "AssetPair": {
-    "asset_in": "AssetId",
-    "asset_out": "AssetId"
-  },
-  "Amount": "i128",
-  "AmountOf": "Amount",
-  "Address": "AccountId",
-  "OrmlAccountData": {
-    "free": "Balance",
-    "frozen": "Balance",
-    "reserved": "Balance"
-  },
-  "Fee": {
-    "numerator": "u32",
-    "denominator": "u32"
-  },
-  "BalanceInfo": {
-    "amount": "Balance",
-    "assetId": "AssetId"
-  },
-  "Chain": {
-    "genesisHash": "Vec<u8>",
-    "lastBlockHash": "Vec<u8>"
-  },
-  "CurrencyId": "AssetId",
-  "CurrencyIdOf": "AssetId",
-  "Intention": {
-    "who": "AccountId",
-    "asset_sell": "AssetId",
-    "asset_buy": "AssetId",
-    "amount": "Balance",
-    "discount": "bool",
-    "sell_or_buy": "IntentionType"
-  },
-  "IntentionId": "Hash",
-  "IntentionType": {
-    "_enum": [
-      "SELL",
-      "BUY"
-    ]
-  },
-  "LookupSource": "AccountId",
-  "Price": "Balance",
-  "TokenId": "u64",
-  "ClassIdOfUnique": "Compact<u32>",
-  "NftClassIdOf": "u32",
-  "NftTokenIdOf": "u32",
-  "ClassId": "u32",
-  "InstanceId": "u32",
-  "ClassData": {
-    "is_pool": "bool"
-  },
-  "TokenData": {
-    "locked": "bool",
-    "emote": "Vec<u8>"
-  },
-  "CID": "Vec<u8>",
-  "ClassInfo": {
-    "metadata": "Vec<u8>",
-    "total_issuance": "TokenId",
-    "owner": "AccountId",
-    "data": "ClassData"
-  },
-  "TokenInfo": {
-    "metadata": "Vec<u8>",
-    "owner": "AccountId",
-    "data": "TokenData"
-  },
-  "ClassInfoOf": "ClassInfo",
-  "TokenInfoOf": "TokenInfo",
-  "ClassIdOf": "ClassId",
-  "TokenIdOf": "TokenId",
-  "OrderedSet": "Vec<AssetId>",
-  "VestingSchedule": {
-    "start": "BlockNumber",
-    "period": "BlockNumber",
-    "period_count": "u32",
-    "per_period": "Compact<Balance>"
-  },
-  "VestingScheduleOf": "VestingSchedule",
-  "PoolId": "AccountId"
-}
+  endpoint: wss://westmint-rpc.polkadot.io
 definitions:
   mapping: &mymapping
     handlers:
@@ -97,5 +14,5 @@ definitions:
 dataSources:
   - name: main
     kind: substrate/Runtime
-    startBlock: 1
+    startBlock: 778425
     mapping: *mymapping # can reuse or change
