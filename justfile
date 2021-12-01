@@ -1,6 +1,12 @@
 up:
   docker-compose up
 
+down:
+  docker-compose down
+
+pull:
+  docker-compose pull
+
 clear:
   docker-compose rm -f
   rm -rf .data
