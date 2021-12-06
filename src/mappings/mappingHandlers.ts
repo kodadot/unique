@@ -11,6 +11,7 @@ import {
   getSigner,
   processToken,
   getArgs,
+  getBasicData,
 } from './utils/extract'
 import { getCollectionOrElseCreate, getTokenOrElseCreate } from './utils/getter'
 import { createTokenId, exists, isEmpty, matchEvent } from './utils/helpers'
@@ -30,7 +31,7 @@ export async function handleCreateCollection(
   final.admin = admin
   final.blockNumber = BigInt(collection.blockNumber)
 
-  logger.info(`SAVED [COLLECTION] ${final.id}`)
+  logger.info(`SAVED in ${collection.blockNumber} [COLLECTION] ${final.id}`)
   await final.save()
 }
 
@@ -145,15 +146,23 @@ export async function handleAssetStatusChange(event: SubstrateEvent): Promise<vo
   extrinsic.args
   const [id, newOwner, newIssuer, newAdmin, newFreezer,  ,frozen] = getArgs(extrinsic.args, [0])
   const caller = getSigner(event)
-  log('FORCE ROOT', { args: extrinsic.args })
-  const final = await getCollectionOrElseCreate(id.toString(), caller)
-  final.currentOwner = newOwner;
-  final.admin = newAdmin
-  final.issuer = newIssuer
-  final.freezer = newFreezer
-  final.frozen = frozen === 'true'
-  logger.info(`SAVED [COLLECTION] ${final.id}`)
-  await final.save()
+
+  try {
+    BigInt(id) // this will throw if id is not a number
+    log('FORCE ROOT', { args: extrinsic.args })
+    const final = await getCollectionOrElseCreate(id.toString(), caller)
+    final.currentOwner = newOwner;
+    final.admin = newAdmin
+    final.issuer = newIssuer
+    final.freezer = newFreezer
+    final.frozen = frozen === 'true'
+    logger.info(`SAVED [COLLECTION] ${final.id}`)
+    await final.save()
+  } catch (e) {
+    const other = getBasicData(event.extrinsic);
+    logger.warn(`!! BAD ROOT in block ${JSON.stringify(other, null, 2)}:  ${e.message}`);
+  }
+  
 }
 
 export async function handleAttributeSet(event: SubstrateEvent): Promise<void> {
