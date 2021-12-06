@@ -18,5 +18,8 @@ build:
   rm -rfv dist
   yarn build
 
+view:
+  gh repo view --web
+
 bug: clear build up
 sub: types build
