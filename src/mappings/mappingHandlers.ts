@@ -270,14 +270,20 @@ export async function handleTokenMetadata(
   const [collectionId, id, metadata, frozen] = getEventArgs(event, [0, 1])
   const caller = getSigner(event)
   log('TOKEN METADATA', { id, metadata, frozen })
-  if (isEmpty(id, 'Collection Metadata')) {
+  if (isEmpty(id, 'Token Metadata [id]')) {
     return
   }
 
+  const finalId = createTokenId(collectionId, id)
+
   const final = await getTokenOrElseCreate(
-    createTokenId(collectionId, id),
+    finalId,
     caller
   )
+
+  if (isEmpty(final.collectionId, 'Token Metadata [collectionId]')) {
+    return
+  }
 
   final.metadata = metadata
   final.metadataFrozen = frozen === 'true'
