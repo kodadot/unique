@@ -229,12 +229,11 @@ export async function handleTokenTransfer(
   event: SubstrateEvent
 ): Promise<void> {
   const [collectionId, id, from, to] = getEventArgs(event, [0, 1])
-  const final = await getTokenOrElseCreate(
-    createTokenId(collectionId, id),
-    from
-  )
 
-  if (isEmpty(final.collectionId, 'Token Transfer [collectionId]')) {
+  const finalId = createTokenId(collectionId, id)
+  const final = await getTokenOrElseCreate(finalId, from)
+
+  if (isEmpty(final.collectionId, `Token Transfer ${finalId} [collectionId]`)) {
     return
   }
 
@@ -286,7 +285,7 @@ export async function handleTokenMetadata(
     caller
   )
 
-  if (isEmpty(final.collectionId, 'Token Metadata [collectionId]')) {
+  if (isEmpty(final.collectionId, `Token Metadata ${finalId} [collectionId]`)) {
     return
   }
 
