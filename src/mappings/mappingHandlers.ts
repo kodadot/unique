@@ -233,6 +233,11 @@ export async function handleTokenTransfer(
     createTokenId(collectionId, id),
     from
   )
+
+  if (isEmpty(final.collectionId, 'Token Transfer [collectionId]')) {
+    return
+  }
+
   final.currentOwner = to
   logger.info(`SAVED [TOKEN] ${final.id}`)
   await final.save()
