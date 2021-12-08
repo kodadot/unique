@@ -301,11 +301,18 @@ export async function handleTokenMetadataClear(
 ): Promise<void> {
   const [collectionId, id] = getEventArgs(event, [0, 1])
   const caller = getSigner(event)
+  const finalId = createTokenId(collectionId, id)
   const final = await getTokenOrElseCreate(
-    createTokenId(collectionId, id),
+    finalId,
     caller
   )
-  log('TOKEN METADATA CLEAR', { id })
+  
+  if (isEmpty(final.collectionId, `Token Metadata Clear ${finalId} [collectionId]`)) {
+    return
+  }
+
+  log('TOKEN METADATA CLEAR', { collectionId, id })
+
   final.metadata = null
   final.metadataFrozen = null
   logger.info(`SAVED [TOKEN] ${final.id}`)
