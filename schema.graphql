@@ -6,11 +6,12 @@ type CollectionEntity @entity {
   currentOwner: String!
   metadata: String
   nfts: [NFTEntity] @derivedFrom(field: "collection")
-  blockNumber: BigInt
+  blockNumber: BigInt @index
   burned: Boolean!
   frozen: Boolean!
   attributes: [Attribute]!
   metadataFrozen: Boolean
+  createdAt: Date!
 }
 
 type NFTEntity @entity {
@@ -22,10 +23,11 @@ type NFTEntity @entity {
   burned: Boolean!
   frozen: Boolean!
   collection: CollectionEntity!
-  blockNumber: BigInt
+  blockNumber: BigInt @index
   events: [Event]
   attributes: [Attribute]!
   metadataFrozen: Boolean
+  createdAt: Date!
 }
 
 type Attribute @jsonField {

@@ -30,6 +30,7 @@ export async function handleCreateCollection(
   const final = await getCollectionOrElseCreate(id.toString(), caller)
   final.admin = admin
   final.blockNumber = BigInt(collection.blockNumber)
+  final.createdAt = collection.timestamp
 
   logger.info(`SAVED in ${collection.blockNumber} [COLLECTION] ${final.id}`)
   await final.save()
@@ -48,6 +49,7 @@ export async function handleForceCreateCollection(event: SubstrateEvent): Promis
   const final = await getCollectionOrElseCreate(id.toString(), admin)
   final.admin = admin
   final.blockNumber = BigInt(collection.blockNumber)
+  final.createdAt = collection.timestamp
 
   logger.info(`SAVED [COLLECTION] ${final.id}`)
   await final.save()
@@ -220,6 +222,7 @@ export async function handleTokenCreate(event: SubstrateEvent): Promise<void> {
   final.id = createTokenId(collectionId, id)
   final.blockNumber = BigInt(token.blockNumber)
   final.collectionId = collectionId
+  final.createdAt = token.timestamp
 
   logger.info(`SAVED [TOKEN] ${final.id}`)
   await final.save()
