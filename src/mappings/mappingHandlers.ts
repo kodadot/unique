@@ -83,7 +83,7 @@ export async function handleCollectionMetadataClear(
   log('COLLECTION METADATA CLEAR', { id })
   final.metadata = null
   final.metadataFrozen = null
-  logger.info(`SAVED [TOKEN] ${final.id}`)
+  logger.info(`SAVED [COLLECTION] ${final.id}`)
   await final.save()
 }
 
@@ -254,8 +254,9 @@ export async function handleTokenBurn(event: SubstrateEvent): Promise<void> {
 export async function handleTokenFreeze(event: SubstrateEvent): Promise<void> {
   const [collectionId, id] = getEventArgs(event, [0, 1])
   const caller = getSigner(event)
+  const finalId = createTokenId(collectionId, id)
   const final = await getTokenOrElseCreate(
-    createTokenId(collectionId, id),
+    finalId,
     caller
   )
   const isFreze = matchEvent(event.event, 'Frozen', 'uniques')
@@ -266,6 +267,11 @@ export async function handleTokenFreeze(event: SubstrateEvent): Promise<void> {
     freeze: isFreze,
   })
   final.frozen = isFreze
+
+  if (isEmpty(collectionExist(collectionId), `Token Freeze ${finalId} [collectionId]`)) {
+    return
+  }
+
   logger.info(`SAVED [TOKEN] ${final.id}`)
   await final.save()
 }
@@ -309,7 +315,7 @@ export async function handleTokenMetadataClear(
     caller
   )
   
-  if (isEmpty(final.collectionId, `Token Metadata Clear ${finalId} [collectionId]`)) {
+  if (isEmpty(collectionExist(collectionId), `Token Metadata Clear ${finalId} [collectionId]`)) {
     return
   }
 
@@ -326,13 +332,19 @@ export async function handleTokenApproval(
 ): Promise<void> {
   const [collectionId, id, , delegate] = getEventArgs(event, [0, 1])
   const caller = getSigner(event)
+  const finalId = createTokenId(collectionId, id)
   const final = await getTokenOrElseCreate(
-    createTokenId(collectionId, id),
+    finalId,
     caller
   )
   const isCancel = matchEvent(event.event, 'ApprovalCancelled', 'uniques')
   log('GRANTING TOKEN APPROVAL', { id, delegate, isCancel })
   final.delegate = isCancel ? null : delegate
+
+  if (isEmpty(collectionExist(collectionId), `Token Approval ${finalId} [collectionId]`)) {
+    return
+  }
+
   logger.info(`SAVED [TOKEN] ${final.id}`)
   await final.save()
 }
