@@ -3,7 +3,7 @@ description: GraphQL service for Uniques and Assets on Statemine
 repository: https://github.com/vikiival/unique.git
 schema: ./schema.graphql
 network:
-  endpoint: wss://pub.elara.patract.io/statemine
+  endpoint: wss://pub.elara.patract.io/westmint
 definitions:
   mapping: &mymapping
     handlers:
@@ -14,5 +14,5 @@ definitions:
 dataSources:
   - name: main
     kind: substrate/Runtime
-    startBlock: 323750
+    startBlock: 1205178
     mapping: *mymapping # can reuse or change

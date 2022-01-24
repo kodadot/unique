@@ -31,6 +31,11 @@ export const tokenIdOf = (collectionAndId: [string, string] | string): string =>
   return createTokenId(collection, id)
 }
 
+export const splitTokenId = (tokenId: string): [string, string] => {
+  const [collection, id] = tokenId.split('-')
+  return [collection, id]
+}
+
 export const isTokenClassCreated = ({ event }: EventRecord): boolean =>
   matchEvent(event, 'TokenClassCreated', 'nft')
 

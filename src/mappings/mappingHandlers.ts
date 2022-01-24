@@ -145,7 +145,6 @@ export async function handleCollectionPermission(
 
 export async function handleAssetStatusChange(event: SubstrateEvent): Promise<void> {
   const {extrinsic: { extrinsic }} = event;
-  extrinsic.args
   const [id, newOwner, newIssuer, newAdmin, newFreezer,  ,frozen] = getArgs(extrinsic.args, [0])
   const caller = getSigner(event)
 
