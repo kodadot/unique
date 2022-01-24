@@ -38,3 +38,7 @@ export async function getTokenOrElseCreate(id: string, caller: string): Promise<
   });
   
 }
+
+export async function collectionExist(id: string): Promise<Boolean> {
+  return !!(await CollectionEntity.get(id));
+}

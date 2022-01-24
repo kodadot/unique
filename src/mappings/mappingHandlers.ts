@@ -13,7 +13,7 @@ import {
   getArgs,
   getBasicData,
 } from './utils/extract'
-import { getCollectionOrElseCreate, getTokenOrElseCreate } from './utils/getter'
+import { collectionExist, getCollectionOrElseCreate, getTokenOrElseCreate } from './utils/getter'
 import { createTokenId, exists, isEmpty, matchEvent } from './utils/helpers'
 
 export async function handleCreateCollection(
@@ -235,7 +235,7 @@ export async function handleTokenTransfer(
   const finalId = createTokenId(collectionId, id)
   const final = await getTokenOrElseCreate(finalId, from)
 
-  if (isEmpty(final.collectionId, `Token Transfer ${finalId} [collectionId]`)) {
+  if (isEmpty(collectionExist(collectionId), `Token Transfer ${finalId} [collectionId]`)) {
     return
   }
 
@@ -287,7 +287,7 @@ export async function handleTokenMetadata(
     caller
   )
 
-  if (isEmpty(final.collectionId, `Token Metadata ${finalId} [collectionId]`)) {
+  if (isEmpty(collectionExist(collectionId), `Token Metadata ${finalId} [collectionId]`)) {
     return
   }
 
