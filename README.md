@@ -1,10 +1,10 @@
 # Unique 
-### SubQuery Indexer for Substare chains with the unique pallet
+### SubQuery Indexer for Substrate chains with the unique pallet
 ---
 
-The SubQuery Indexer is suitable for Substare chains with the unique pallet.
-This readme will go through the steps to set up the SubQuery Indexer and also provides some usefull hacks for the ease of development.
-A SubQuery package defines which data The SubQuery will index from the Substrate blockchain, and how it will store it. 
+The SubQuery Indexer is suitable for Substrate chains with a unique pallet.
+This readme will go through the steps to set up the SubQuery Indexer and provide some valuable hacks for ease of development.
+A SubQuery package defines which data The SubQuery will index from the Substrate blockchain and how it will store it. 
 
 ### Prerequisites 🎒
 
@@ -17,7 +17,7 @@ docker 🐳
 
 ### Hyper start 🚀
 
-First we need to install dependencies.
+First, we need to install dependencies.
 ```bash
 just quickstart
 ```
@@ -29,16 +29,16 @@ just up
 
 ## I want to change something in this project
 
-The core of this indexer are following files:
+The core of this indexer is the following files:
 
 - Which events/extrinsics to index + configuration - `project.yaml`
 - Entities which we want to save in DB - `schema.graphql`
 - How map events/extrinsics to the GraphQL - `src/mappings/` directory
 
 For more information on how to write the SubQuery, 
-check out ourdoc section on [Define the SubQuery](https://doc.subquery.network/define_a_subquery.html) 
+check out our doc section on [Define the SubQuery](https://doc.subquery.network/define_a_subquery.html) 
 
-### I want to add/remove fields which are indexed
+### I want to add/remove fields that are indexed
 
 Open `schema.graphql` and modify the entities how much you want. [Supported types can be found here](https://doc.subquery.network/create/graphql/#entities)
 
@@ -57,9 +57,9 @@ type CollectionEntity @entity {
 }
 ```
 
-Each entity needs to have a `id: ID!` field. Exclamation mark (`!`) says that the field is required and without it the entity will not be indexed and the database will fail on null-pointer.
+Each entity needs to have an `id: ID!` field. An exclamation mark (`!`) says that the field is required, and without it, the entity will not be indexed, and the database will fail on null-pointer.
 
-You can also define relation ships between entities. For example, if you want to index one-to-many relation, it can  be defined like `nfts: [NFTEntity] @derivedFrom(field: "collection")`. `@derivedFrom(field: "collection")` indicates that collection can be queried backwards from `NFTEntity`. 
+You can also define relationships between entities. For example, if you want to index one-to-many relation, it can be defined like `nfts: [NFTEntity] @derivedFrom(field: "collection")`. `@derivedFrom(field: "collection")` indicates that collection can be queried backwards from `NFTEntity`. 
 
 ```graphql
 type NFTEntity @entity {
@@ -68,12 +68,12 @@ type NFTEntity @entity {
 }
 ```
 
-If you changed the schema we need to regenerate it by running:
+If you changed the schema, we need to regenerate it by running:
 ````
 just types
 ````
 
-## I want to add new event/extrinsic to index
+## I want to add a new event/extrinsic to the index
 
 in `project.yaml` add the new event/extrinsic create new record under the handlers to index:
 ```yaml
@@ -136,7 +136,7 @@ query {
 
 ### Dev hacks (FAQ) 🦇
 
-For the ease of development we use [just](https://github.com/casey/just) and we recommend to use it.
+We use [just](https://github.com/casey/just), and we recommend using it.
 
 **1. How can I turn off the indexer properly?** 
 
