@@ -23,3 +23,9 @@ view:
 
 bug: clear build up
 sub: types build
+
+quickstart: pull
+  yarn
+  yarn codegen
+  yarn build
+  
